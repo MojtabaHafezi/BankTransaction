@@ -123,7 +123,6 @@
     <ClInclude Include="Interest.h" />
     <ClInclude Include="Link.h" />
     <ClInclude Include="LinkedList.h" />
-    <ClInclude Include="SimpleException.h" />
     <ClInclude Include="Transaction.h" />
     <ClInclude Include="TransactionManager.h" />
     <ClInclude Include="Transfer.h" />

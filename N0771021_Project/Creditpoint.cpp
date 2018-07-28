@@ -1,8 +1,23 @@
+/*
+Plagiarism Declaration
+I am aware of the University’s rules on plagiarism and collusion and I understand that,
+if I am found to have broken these rules, it will be treated as Academic Misconduct and dealt with accordingly.
+I understand that if I lend this piece of work to another student and they copy all or part of it, either with or
+without my knowledge or permission, I shall be guilty of collusion.  In submitting this work, I confirm that
+I am aware of, and am abiding by, the University’s expectations for proof-reading.
+
+Name: Mojtaba Hafezi ID No: N0771021
+*/
+
 #include "Creditpoint.h"
 
 
-
-
+//maps a string to an integer and can be used to find the corresponding data.
+static const std::map<std::string, int> types
+{
+	{ "CHEQUE", 1 },
+	{ "CASH", 2 }
+};
 
 Creditpoint::Creditpoint(std::string pName, Date pDate, double pAmount, Type pType)
 	:Transaction(pName, pDate, pAmount)
@@ -11,8 +26,7 @@ Creditpoint::Creditpoint(std::string pName, Date pDate, double pAmount, Type pTy
 }
 
 Creditpoint::~Creditpoint()
-{
-}
+{}
 
 const std::string Creditpoint::display()
 {
@@ -56,15 +70,17 @@ const Creditpoint::Type Creditpoint::getCreditpointType(int id)
 
 	return type;
 }
-
+/***************************************************************************************
+*	 General idea of this implementation from:
+*    Title: how can I map an int to a corresponding string in C/C++
+*    Author: R Samuel Klatchko
+*    Date: 2017
+*    Code version: N.A.
+*    Availability:https://stackoverflow.com/questions/1910733/how-can-i-map-an-int-to-a-corresponding-string-in-c-c
+*
+***************************************************************************************/
 const int Creditpoint::getCreditpointTypeFromString(std::string name)
 {
-	static const std::map<std::string, int> types
-	{
-		{ "CHEQUE", 1 },
-		{ "CASH", 2 }
-	};
-
 	for (auto & c : name) c = toupper(c); //convert all characters to upper case
 	auto search = types.find((name));
 	if (search != types.end())

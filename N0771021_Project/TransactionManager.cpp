@@ -1,5 +1,26 @@
+/*
+Plagiarism Declaration
+I am aware of the University’s rules on plagiarism and collusion and I understand that,
+if I am found to have broken these rules, it will be treated as Academic Misconduct and dealt with accordingly.
+I understand that if I lend this piece of work to another student and they copy all or part of it, either with or
+without my knowledge or permission, I shall be guilty of collusion.  In submitting this work, I confirm that
+I am aware of, and am abiding by, the University’s expectations for proof-reading.
+
+Name: Mojtaba Hafezi ID No: N0771021
+*/
+
 #include "TransactionManager.h"
 
+//Map that maps a string to an integer. Used to find the relevant transaction object type.
+static const std::map<std::string, int> types
+{
+	{ "DB", 1 },
+	{ "CSP", 2 },
+	{ "DD", 3 },
+	{ "TR", 4 },
+	{ "CDP", 5 },
+	{ "INT", 6 }
+};
 
 
 bool TransactionManager::addTransaction(Transaction * pTransaction)
@@ -14,12 +35,29 @@ bool TransactionManager::removeTransaction()
 
 const std::string TransactionManager::displayAllTransactions()
 {
-	return linkedList.display();
+	Link<Transaction>* temp;
+	std::string displayText = "";
+	if (getSize() > 0)
+		for (temp = linkedList.header; temp != 0; temp = temp->next)
+		{
+			displayText += temp->transaction->display();
+			displayText += "\n";
+		}
+	else
+		displayText += "No data available. \n";
+	return displayText;
 }
 
 const std::string TransactionManager::displayAllTransactionsWithDelimiter(const char delimiter)
 {
-	return linkedList.displayWithDelimiter(delimiter);
+	Link<Transaction>* temp;
+	std::string displayText = "";
+	for (temp = linkedList.header; temp != 0; temp = temp->next)
+	{
+		displayText += temp->transaction->displayWithDelimiter(delimiter);
+		displayText += "\n";
+	}
+	return displayText;
 }
 
 const int TransactionManager::getSize()
@@ -27,17 +65,17 @@ const int TransactionManager::getSize()
 	return linkedList.getSize();
 }
 
+/***************************************************************************************
+*	 General idea of this implementation from:
+*    Title: how can I map an int to a corresponding string in C/C++
+*    Author: R Samuel Klatchko
+*    Date: 2017
+*    Code version: N.A.
+*    Availability:https://stackoverflow.com/questions/1910733/how-can-i-map-an-int-to-a-corresponding-string-in-c-c
+*
+***************************************************************************************/
 const int TransactionManager::getTransactionType(std::string identifier)
 {
-	static const std::map<std::string, int> types
-	{
-		{ "DB", 1 },
-		{ "CSP", 2 },
-		{ "DD", 3 },
-		{ "TR", 4 },
-		{ "CDP", 5 },
-		{ "INT", 6 }
-	};
 	auto search = types.find(identifier);
 	if (search != types.end())
 		return search->second;
@@ -46,7 +84,15 @@ const int TransactionManager::getTransactionType(std::string identifier)
 }
 
 
-//Bubblesort
+/***************************************************************************************
+*	 Basic idea of the implementation from:
+*    Title: Function Templates (Slide 4)
+*    Author: Peter FitzGerald
+*    Date: 2017
+*    Code version: N.A.
+*    Availability: Slides from Lecture 11
+*	 Strongly changed due to the fact that it is a linked list and not an array.
+***************************************************************************************/
 void TransactionManager::simpleSort()
 {
 	std::cout << "Sorting list..." << std::endl;
@@ -58,13 +104,13 @@ void TransactionManager::simpleSort()
 	if (linkedList.header == 0)
 		return;
 
-	for (int i = 0; i < linkedList.getSize(); i++)
+	for (int i = 0; i < linkedList.getSize(); i++) //first loop
 	{
-		if (!sortable)
+		if (!sortable) //break out of loop if there are no elements left to sort
 			return;
 		sortable = false;
 		temp = previous = linkedList.header;
-		do
+		do //second loop
 		{
 			if (temp == linkedList.header && temp->transaction->getTime() < temp->next->transaction->getTime())
 			{
@@ -74,21 +120,29 @@ void TransactionManager::simpleSort()
 				linkedList.header = temp2;
 				sortable = true;
 			}
-			if (temp->next != 0 && temp->transaction->getTime() < temp->next->transaction->getTime())
-			{
-				//SWAP THE DATA - previous link needed
-				previous->next = temp->next;
-				temp->next = temp->next->next;
-				previous->next->next = temp;
-				sortable = true;
-			}
+			else
+				if (temp->next != 0 && temp->transaction->getTime() < temp->next->transaction->getTime())
+				{
+					//SWAP THE DATA - previous link needed
+					previous->next = temp->next;
+					temp->next = temp->next->next;
+					previous->next->next = temp;
+					sortable = true;
+				}
 			previous = temp;
 			temp = temp->next;
-		} while (temp != 0);
+		}
+		while (temp != 0);
 	}
-
 }
-
+/***************************************************************************************
+*	 Basic idea of the implementation from:
+*    Title: Linear search
+*    Author: Peter FitzGerald
+*    Date: 2017
+*    Code version: N.A.
+*    Availability: Slides from Lecture 11
+***************************************************************************************/
 const std::string TransactionManager::linearSearch(time_t pTime)
 {
 	Link<Transaction>* temp;
@@ -100,6 +154,14 @@ const std::string TransactionManager::linearSearch(time_t pTime)
 	return "No data found.\n";
 }
 
+/***************************************************************************************
+*	 Basic idea of the implementation from:
+*    Title: Linear search
+*    Author: Peter FitzGerald
+*    Date: 2017
+*    Code version: N.A.
+*    Availability: Slides from Lecture 11
+***************************************************************************************/
 const std::string TransactionManager::linearSearchAll(time_t pTime)
 {
 	bool valid = false;
@@ -119,7 +181,14 @@ const std::string TransactionManager::linearSearchAll(time_t pTime)
 		return "No data found.\n";
 }
 
-
+/***************************************************************************************
+*	 Basic idea of the implementation from:
+*    Title: Binary search
+*    Author: Peter FitzGerald
+*    Date: 2017
+*    Code version: N.A.
+*    Availability: Slides from Lecture 11
+***************************************************************************************/
 const std::string TransactionManager::binarySearch(time_t pTime)
 {
 
@@ -133,10 +202,10 @@ const std::string TransactionManager::binarySearch(time_t pTime)
 	{
 		if (required)
 			counter = 0;
-		while (counter <= middle)
+		while (counter < middle)
 		{
-			if(temp)
-			temp = temp->next;
+			if (temp)
+				temp = temp->next;
 			counter++;
 		}
 
@@ -158,7 +227,7 @@ const std::string TransactionManager::binarySearch(time_t pTime)
 		middle = (low + high + 1) / 2;
 	}
 	return "No data found. \n";
-	
+
 }
 
 
@@ -194,6 +263,14 @@ bool TransactionManager::saveFileWithDelimiter(const std::string fileName, const
 	return true;
 }
 
+/***************************************************************************************
+*	 General idea of this implementation from:
+*    Title: CO3402 Object-Oriented Methods Assignment
+*    Author: Mojtaba Hafezi
+*    Date: 05/12/2016
+*    Code version: 2.1
+*	 Availablity: N.A. - UCLAN assignment
+***************************************************************************************/
 bool TransactionManager::loadFile(const std::string fileName, const char delimiter)
 {
 	//attributes required for the creation of the transaction objects
@@ -215,36 +292,34 @@ bool TransactionManager::loadFile(const std::string fileName, const char delimit
 	bool valid = false;
 	std::ifstream file(fileName, std::ifstream::in);
 
-	if (file) {
+	if (file) //if the file was found
+	{
 		//while there is something to read
-		while (file) {
+		while (file)
+		{
 			std::string fileInput;
-			//Get the complete line into the string "fileInput"
-			getline(file, fileInput);
-			//Skip over last empty line
-			if (fileInput.size() <= 1) {
+			getline(file, fileInput);	//Get the complete line into the string "fileInput"
+			if (fileInput.size() <= 1)	//Skip over last empty line
+			{
 				continue;
 			}
 
 			//Pos points to the position of the delimiter
 			size_t pos = 0;
-			pos = fileInput.find(delimiter);
-			//Id is the substring from 0 to the position of the first delimiter
-			std::string id = fileInput.substr(0, pos);
-			//erase it up to the delimiter (+1)
-			fileInput.erase(0, pos + 1);
+			pos = fileInput.find(delimiter);	//find the position of the first occurence of delimiter
+			std::string id = fileInput.substr(0, pos);	//Id is the substring from 0 to the position of the first delimiter
+			fileInput.erase(0, pos + 1);	//erase it up to the delimiter (+1)
 			//Ready to read in rest of data, requires to distinguish between Transactions
 			int transactionType = getTransactionType(id);
-			/// TODO: 3 and 5 not working
 			switch (transactionType)
 			{
 			case 1:
 				name = "Debit";
 				pos = fileInput.find(delimiter);
-				day = std::stoi(fileInput.substr(0, pos));
+				day = std::stoi(fileInput.substr(0, pos));	//using the string to integer method
 				fileInput.erase(0, pos + 1);
 				pos = fileInput.find(delimiter);
-				month = Date::getMonthByName(fileInput.substr(0, pos));
+				month = Date::getMonthByName(fileInput.substr(0, pos));	//using the helper method to get the month as int
 				fileInput.erase(0, pos + 1);
 				pos = fileInput.find(delimiter);
 				year = std::stoi(fileInput.substr(0, pos));
@@ -257,7 +332,7 @@ bool TransactionManager::loadFile(const std::string fileName, const char delimit
 				sec = stoi(string1.substr(6, 2));
 				fileInput.erase(0, pos + 1);
 				pos = fileInput.find(delimiter);
-				amount = std::stod(fileInput.substr(0, pos));
+				amount = std::stod(fileInput.substr(0, pos));	//string to double method
 				fileInput.erase(0, pos + 1);
 				pos = fileInput.find(delimiter);
 				string1 = (fileInput.substr(0, pos)); //card number
@@ -272,9 +347,8 @@ bool TransactionManager::loadFile(const std::string fileName, const char delimit
 				typeString = fileInput.substr(0, pos);
 				authType = Debit::getAuthorisationType(Debit::getAuthorisationTypeFromString(typeString)); //location
 				addTransaction(new Debit(name, Date(year, month, day, hour, min, sec), amount, string1, string2, string3, authType));
-				//debit
 				break;
-			case 2://cashpoint
+			case 2:
 				name = "Cashpoint";
 				pos = fileInput.find(delimiter);
 				day = std::stoi(fileInput.substr(0, pos));
@@ -285,7 +359,7 @@ bool TransactionManager::loadFile(const std::string fileName, const char delimit
 				pos = fileInput.find(delimiter);
 				year = std::stoi(fileInput.substr(0, pos));
 				fileInput.erase(0, pos + 1);
-				//read time with specific delimiter
+
 				pos = fileInput.find(delimiter);
 				string1 = (fileInput.substr(0, pos));
 				hour = stoi(string1.substr(0, 2));
@@ -302,7 +376,7 @@ bool TransactionManager::loadFile(const std::string fileName, const char delimit
 				string2 = (fileInput.substr(0, pos)); //card number
 				addTransaction(new Cashpoint(name, Date(year, month, day, hour, min, sec), amount, string1, string2));
 				break;
-			case 3: //direct debit  -- 3
+			case 3:
 				name = "Direct Debit";
 				pos = fileInput.find(delimiter);
 				day = std::stoi(fileInput.substr(0, pos));
@@ -313,7 +387,7 @@ bool TransactionManager::loadFile(const std::string fileName, const char delimit
 				pos = fileInput.find(delimiter);
 				year = std::stoi(fileInput.substr(0, pos));
 				fileInput.erase(0, pos + 1);
-				//read time with specific delimiter
+
 				pos = fileInput.find(delimiter);
 				string1 = (fileInput.substr(0, pos));
 				hour = stoi(string1.substr(0, 2));
@@ -327,7 +401,7 @@ bool TransactionManager::loadFile(const std::string fileName, const char delimit
 				string1 = (fileInput.substr(0, pos)); //reference number
 				addTransaction(new DirectDebit(name, Date(year, month, day, hour, min, sec), amount, string1));
 				break;
-			case 4://transfer
+			case 4:
 				name = "Transfer";
 				pos = fileInput.find(delimiter);
 				day = std::stoi(fileInput.substr(0, pos));
@@ -338,7 +412,7 @@ bool TransactionManager::loadFile(const std::string fileName, const char delimit
 				pos = fileInput.find(delimiter);
 				year = std::stoi(fileInput.substr(0, pos));
 				fileInput.erase(0, pos + 1);
-				//read time with specific delimiter
+
 				pos = fileInput.find(delimiter);
 				string1 = (fileInput.substr(0, pos));
 				hour = stoi(string1.substr(0, 2));
@@ -356,7 +430,7 @@ bool TransactionManager::loadFile(const std::string fileName, const char delimit
 				fileInput.erase(0, pos + 1);
 				addTransaction(new Transfer(name, Date(year, month, day, hour, min, sec), amount, string1, string2));
 				break;
-			case 5://creditpoint 5
+			case 5:
 				name = "Creditpoint";
 				pos = fileInput.find(delimiter);
 				day = std::stoi(fileInput.substr(0, pos));
@@ -367,7 +441,7 @@ bool TransactionManager::loadFile(const std::string fileName, const char delimit
 				pos = fileInput.find(delimiter);
 				year = std::stoi(fileInput.substr(0, pos));
 				fileInput.erase(0, pos + 1);
-				//read time with specific delimiter
+
 				pos = fileInput.find(delimiter);
 				string1 = (fileInput.substr(0, pos));
 				hour = stoi(string1.substr(0, 2));
@@ -382,7 +456,7 @@ bool TransactionManager::loadFile(const std::string fileName, const char delimit
 				creditType = Creditpoint::getCreditpointType(Creditpoint::getCreditpointTypeFromString(typeString)); //type
 				addTransaction(new Creditpoint(name, Date(year, month, day, hour, min, sec), amount, creditType));
 				break;
-			case 6: //interest
+			case 6:
 				name = "Debit";
 				pos = fileInput.find(delimiter);
 				day = std::stoi(fileInput.substr(0, pos));
@@ -393,7 +467,7 @@ bool TransactionManager::loadFile(const std::string fileName, const char delimit
 				pos = fileInput.find(delimiter);
 				year = std::stoi(fileInput.substr(0, pos));
 				fileInput.erase(0, pos + 1);
-				//read time with specific delimiter
+
 				pos = fileInput.find(delimiter);
 				string1 = (fileInput.substr(0, pos));
 				hour = stoi(string1.substr(0, 2));

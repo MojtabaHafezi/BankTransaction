@@ -45,9 +45,6 @@
     <ClInclude Include="Interest.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleException.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="Date.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
